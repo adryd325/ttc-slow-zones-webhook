@@ -14,7 +14,7 @@ const errorWebhooks = [];
 const webhooksTxt = fs
   .readFileSync("webhooks.txt", "utf-8")
   .split("\n")
-  .filter((a) => a.startsWith("#"))
+  .filter((a) => !a.startsWith("#"))
   .map((a) =>
     a.trim().replace(/^(https:\/\/)?(ptb\.|canary\.)?discord(app)?\.com/, "")
   );
