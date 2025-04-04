@@ -1,7 +1,7 @@
 import { markdownTable } from "markdown-table";
 import { Resvg } from "@resvg/resvg-js";
 import FormData from "form-data";
-import { createHash, hash } from "crypto";
+import { createHash } from "crypto";
 import fs from "fs";
 
 const slowZonesPage =
@@ -87,7 +87,7 @@ function parseTable(tableStr) {
 
   // tidy
   tableStr = tableStr.replaceAll("&nbsp;", " ");
-  tableStr = tableStr.replaceAll("<span> </span>", "");
+  tableStr = tableStr.replaceAll(/<span>(\s+)?<\/span>/g, "");
   tableStr = tableStr.replaceAll("<br />", "");
   tableStr = tableStr.replaceAll("\n", "");
   tableStr = tableStr.replaceAll("\n", "");
@@ -174,6 +174,9 @@ async function checkUpdate() {
 
   await fs.promises.writeFile("latest.svg", imageData);
   fs.promises.copyFile("latest.svg", Date.now() + ".svg");
+
+  lastImageHash = imageHash;
+  lastTextHash = textHash;
 }
 
 // Every 30 Minutes
