@@ -1,3 +1,5 @@
 node_modules
 webhooks.txt
-images/*.svg
+state
+id_ed25519_deploy_ttc-slow-zones
+id_ed25519_deploy_ttc-slow-zones.pub
