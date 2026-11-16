@@ -55,11 +55,11 @@ async function sendErrorTxt(error) {
 }
 
 async function sendWebhook(image, updatedDate, tableStr) {
-  let text = "The TTC [slow zones page](" + slowZonesPage + ") was updated!\n\n";
+  let text = "The TTC [slow zones page](<" + slowZonesPage + ">) was updated!\n\n";
   text += "**Updated date on page**: <t:" + Math.floor(updatedDate.getTime() / 1000) + ">\n";
   text += "-# This table is probably not reflective of actual slow zones. "
   text += "The actual list updates multiple times a day and the published one lags behind. ";
-  text += "**[see full diff](https://github.com/adryd325/ttc-slow-zones)**\n";
+  text += "**[see full diff](<https://github.com/adryd325/ttc-slow-zones>)**\n";
 
   for (let i in webhooks) {
     const form = new FormData();
