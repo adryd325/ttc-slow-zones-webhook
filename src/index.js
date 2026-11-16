@@ -279,7 +279,7 @@ async function updateState(
   let day = updatedDate.getDate().toString().padStart(2, "0");
   let dateDir = path.join(GIT_DIR, year, month, day);
 
-  let niceDate = `${year}-${month}-${day} ${updatedDate.getHours()}:${updatedDate.getMinutes()}`
+  let niceDate = `${year}-${month}-${day} ${updatedDate.getHours().padStart(2, "0")}:${updatedDate.getMinutes().padStart(2, "0")}`
 
   // We can skip creating outDir cause it'll be created here
   await fs.promises.mkdir(dateDir, { recursive: true });
@@ -322,7 +322,7 @@ async function updateState(
 
   // One should probably do this with git bindings, however I don't care
   child_process.exec(
-    `bash ./repo_commit.sh '${updatedDate}' '${niceDate}'`,
+    `bash ./repo_commit.sh '${niceDate}'`,
     (error, stdout, stderr) => {
       if (error) {
         sendErrorTxt(`git \n${stdout}\n\n${stderr}`);
@@ -370,8 +370,13 @@ async function checkUpdate() {
     console.log("      | old   ?=?   new |")
     console.log("text  : " + lastImageHash.slice(0,6) + " = " + imageHash.slice(0,6) + " ?")
     console.log("image : " + lastTextHash.slice(0,6) + " = " + textHash.slice(0,6) + " ?")
+    
+    // TODO: If image changes but text does not change, update *only* the image in the repo.
+    // It seems like the graphic can lag behind a little bit, and if that were to trigger when
+    // we look for comparisons of both *text and image*, the data about diffs would be removed
+    // from the front page of the repo.
     if (
-      lastImageHash == imageHash &&
+      /* lastImageHash == imageHash && */ 
       lastTextHash == textHash
     ) {
       return;
