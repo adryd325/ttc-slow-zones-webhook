@@ -55,10 +55,15 @@ async function sendErrorTxt(error) {
 }
 
 async function sendWebhook(image, updatedDate, tableStr) {
-  let text = "The TTC [slow zones page](<" + slowZonesPage + ">) was updated!\n\n";
-  text += "**Updated date on page**: <t:" + Math.floor(updatedDate.getTime() / 1000) + ">\n";
-  text += "-# This table is probably not reflective of actual slow zones. "
-  text += "The actual list updates multiple times a day and the published one lags behind. ";
+  let text =
+    "The TTC [slow zones page](<" + slowZonesPage + ">) was updated!\n\n";
+  text +=
+    "**Updated date on page**: <t:" +
+    Math.floor(updatedDate.getTime() / 1000) +
+    ">\n";
+  text += "-# This table is probably not reflective of actual slow zones. ";
+  text +=
+    "The actual list updates multiple times a day and the published one lags behind. ";
   text += "**[see full diff](<https://github.com/adryd325/ttc-slow-zones>)**\n";
 
   for (let i in webhooks) {
@@ -274,12 +279,12 @@ function dateBreak(date) {
   let hour = date.getHours().padStart(2, "0");
   let minute = date.getMinutes().padStart(2, "0");
 
-  return {year,month,day,hour,minute}
+  return { year, month, day, hour, minute };
 }
 
 function getNiceDate(date) {
-  const {year, month, day, hour, minute} = dateBreak(updatedDate)
-  return `${year}-${month}-${day} ${hour}:${minute}`
+  const { year, month, day, hour, minute } = dateBreak(updatedDate);
+  return `${year}-${month}-${day} ${hour}:${minute}`;
 }
 
 async function updateState(
@@ -290,7 +295,7 @@ async function updateState(
   diffedTables,
   csv,
 ) {
-  const {year, month, day} = dateBreak(updatedDate)
+  const { year, month, day } = dateBreak(updatedDate);
   let dateDir = path.join(GIT_DIR, year, month, day);
 
   let niceDate = getNiceDate();
@@ -378,19 +383,35 @@ async function checkUpdate() {
 
     // Exit if nothing has changed
     let imageHash = createHash("sha256").update(imageData).digest("hex");
-    let textHash = createHash("sha256").update(JSON.stringify(rawTables)).digest("hex");
-    let lastTextHash = createHash("sha256").update(JSON.stringify(lastTable)).digest("hex");
-    console.log("Fetched page at", new Date())
-    console.log("      | old   ?=?   new |")
-    console.log("text  : " + lastImageHash.slice(0,6) + " = " + imageHash.slice(0,6) + " ?")
-    console.log("image : " + lastTextHash.slice(0,6) + " = " + textHash.slice(0,6) + " ?")
-    
+    let textHash = createHash("sha256")
+      .update(JSON.stringify(rawTables))
+      .digest("hex");
+    let lastTextHash = createHash("sha256")
+      .update(JSON.stringify(lastTable))
+      .digest("hex");
+    console.log("Fetched page at", new Date());
+    console.log("      | old   ?=?   new |");
+    console.log(
+      "text  : " +
+        lastImageHash.slice(0, 6) +
+        " = " +
+        imageHash.slice(0, 6) +
+        " ?",
+    );
+    console.log(
+      "image : " +
+        lastTextHash.slice(0, 6) +
+        " = " +
+        textHash.slice(0, 6) +
+        " ?",
+    );
+
     // TODO: If image changes but text does not change, update *only* the image in the repo.
     // It seems like the graphic can lag behind a little bit, and if that were to trigger when
     // we look for comparisons of both *text and image*, the data about diffs would be removed
     // from the front page of the repo.
     if (
-      /* lastImageHash == imageHash && */ 
+      /* lastImageHash == imageHash && */
       lastTextHash == textHash
     ) {
       return;
@@ -419,10 +440,9 @@ async function checkUpdate() {
       makeIntoArray(processedTable),
     );
 
-
-    console.log("Slow zone page updated at", updatedDate)
-    console.log(diffedTables)
-    console.log("")
+    console.log("Slow zone page updated at", updatedDate);
+    console.log(diffedTables);
+    console.log("");
     await sendWebhook(imageRendered, updatedDate, diffedTables);
     updateState(
       rawTables,
