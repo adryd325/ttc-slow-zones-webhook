@@ -55,10 +55,11 @@ async function sendErrorTxt(error) {
 }
 
 async function sendWebhook(image, updatedDate, tableStr) {
-  let text = "The TTC slow zones page was updated!\n";
+  let text = "The TTC [slow zones page](" + slowZonesPage + ") was updated!\n\n";
   text += "**Updated date on page**: <t:" + Math.floor(updatedDate.getTime() / 1000) + ">\n";
-  text += "-# This table is probably not reflective of actual slow zones."
-  text += "The actual list updates multiple times a day and the published one lags behind\n";
+  text += "-# This table is probably not reflective of actual slow zones. "
+  text += "The actual list updates multiple times a day and the published one lags behind. ";
+  text += "**[see full diff](https://github.com/adryd325/ttc-slow-zones)**\n";
 
   for (let i in webhooks) {
     const form = new FormData();
@@ -266,6 +267,21 @@ try {
   console.error("Failed to load lastTable or lastImage");
 }
 
+function dateBreak(date) {
+  let year = date.getFullYear().toString();
+  let month = (date.getMonth() + 1).toString().padStart(2, "0");
+  let day = date.getDate().toString().padStart(2, "0");
+  let hour = date.getHours().padStart(2, "0");
+  let minute = date.getMinutes().padStart(2, "0");
+
+  return {year,month,day,hour,minute}
+}
+
+function getNiceDate(date) {
+  const {year, month, day, hour, minute} = dateBreak(updatedDate)
+  return `${year}-${month}-${day} ${hour}:${minute}`
+}
+
 async function updateState(
   rawTables,
   updatedDate,
@@ -274,12 +290,10 @@ async function updateState(
   diffedTables,
   csv,
 ) {
-  let year = updatedDate.getFullYear().toString();
-  let month = (updatedDate.getMonth() + 1).toString().padStart(2, "0");
-  let day = updatedDate.getDate().toString().padStart(2, "0");
+  const {year, month, day} = dateBreak(updatedDate)
   let dateDir = path.join(GIT_DIR, year, month, day);
 
-  let niceDate = `${year}-${month}-${day} ${updatedDate.getHours().padStart(2, "0")}:${updatedDate.getMinutes().padStart(2, "0")}`
+  let niceDate = getNiceDate();
 
   // We can skip creating outDir cause it'll be created here
   await fs.promises.mkdir(dateDir, { recursive: true });
