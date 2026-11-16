@@ -257,7 +257,7 @@ function makeIntoArrayAllKeys(jsonTable) {
 }
 
 const GIT_DIR = "state";
-const STATE_TABLES_FILE = path.join(GIT_DIR, "raw-tables-current.json");
+const STATE_TABLES_FILE = path.join(GIT_DIR, "tables-raw-current.json");
 const STATE_SVG_FILE = path.join(GIT_DIR, "map-current.svg");
 const readmeTemplate = fs.readFileSync("./REPO_README_TEMPLATE.md", "utf-8");
 
@@ -304,7 +304,10 @@ async function updateState(
   await fs.promises.mkdir(dateDir, { recursive: true });
 
   // Writing these two are actually important to the functionality of this program
-  await fs.promises.writeFile(STATE_TABLES_FILE, JSON.stringify(rawTables));
+  await fs.promises.writeFile(
+    STATE_TABLES_FILE,
+    JSON.stringify(rawTables, null, 2),
+  );
   await fs.promises.writeFile(STATE_SVG_FILE, imageData);
 
   // And these are for the repo
@@ -314,7 +317,7 @@ async function updateState(
   );
   await fs.promises.writeFile(
     path.join(GIT_DIR, "slow-zones-current.csv"),
-    JSON.stringify(csv),
+    csv,
   );
 
   // Day folders
