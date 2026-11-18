@@ -364,7 +364,7 @@ async function checkUpdate() {
       const pageResponse = await fetch(slowZonesPage);
       pageContent = await pageResponse.text();
     } catch (e) {
-      sendError(e);
+      // sendError(e);
       return;
     }
 
