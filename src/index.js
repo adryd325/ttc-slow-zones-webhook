@@ -98,9 +98,10 @@ async function sendWebhook(image, updatedDate, tableStr) {
 }
 
 function getUpdatedDate(html) {
+  // Why the fuck does this fail randomly
   const updatedDateString = html
     .querySelector(".updated-date")
-    .text.replace("Last Updated: ", "");
+    .textContent.replace("Last Updated: ", "");
 
   const currentYear = new Date().getFullYear();
   let splitDate = updatedDateString.split(", ");
@@ -276,14 +277,14 @@ function dateBreak(date) {
   let year = date.getFullYear().toString();
   let month = (date.getMonth() + 1).toString().padStart(2, "0");
   let day = date.getDate().toString().padStart(2, "0");
-  let hour = date.getHours().padStart(2, "0");
-  let minute = date.getMinutes().padStart(2, "0");
+  let hour = date.getHours().toString().padStart(2, "0");
+  let minute = date.getMinutes().toString().padStart(2, "0");
 
   return { year, month, day, hour, minute };
 }
 
 function getNiceDate(date) {
-  const { year, month, day, hour, minute } = dateBreak(updatedDate);
+  const { year, month, day, hour, minute } = dateBreak(date);
   return `${year}-${month}-${day} ${hour}:${minute}`;
 }
 
@@ -298,7 +299,7 @@ async function updateState(
   const { year, month, day } = dateBreak(updatedDate);
   let dateDir = path.join(GIT_DIR, year, month, day);
 
-  let niceDate = getNiceDate();
+  let niceDate = getNiceDate(updatedDate);
 
   // We can skip creating outDir cause it'll be created here
   await fs.promises.mkdir(dateDir, { recursive: true });
