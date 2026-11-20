@@ -381,7 +381,7 @@ async function checkUpdate() {
       const imageResponse = await fetch(imageUrl);
       imageData = await imageResponse.text();
     } catch (e) {
-      sendError(e);
+      //sendError(e);
       return;
     }
 
